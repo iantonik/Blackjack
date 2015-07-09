@@ -1,7 +1,7 @@
-#Method def start
+#Begin method definition
 
+#Define playing cards and playing deck. User ability to define number of decks (1-5 only).
 def initialize_deck
-  # Define cards and playing deck
 
   suits = ['♥', '♦', '♠', '♣']
   numbers = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
@@ -39,7 +39,7 @@ def get_card_points card
   return points
 end
 
-#Calcumlate total
+#Calcumlate total. Account for Ace 1 or 11 points.
 
 def get_total_points hand
   sum = 0
@@ -56,22 +56,24 @@ def get_total_points hand
   end
   return sum
 end
+#End method definition
 
-#Method def end
+
+#Begin Execution
 initialize_deck
 deal_initial_hand
 
-puts "Dealer hand: #{$dealer_hand.first},hidden"
+puts "Dealer hand: #{$dealer_hand.first}, hidden"
 puts "Player hand: #{$player_hand}"
 
 dealer_total = 0
 player_total = 0
 
 
-stop_playing = false
+player_wins = false
 player_busted = false
 
-while !stop_playing
+while !player_wins && !player_busted
   user_choice = " "
   while user_choice !='H' && user_choice !='S'
     puts 'Hit (H) or Stay (S)?'
@@ -81,42 +83,42 @@ while !stop_playing
   if user_choice =='H'
     $player_hand.push $playing_cards.pop
     player_total = get_total_points $player_hand
-    puts "Player hand #{$player_hand}"
+    puts "Player hand #{$player_hand}   Total: #{player_total}"
     if player_total > 21
       puts "Bust! You lose."
-      stop_playing = true
       player_busted = true
     end
     if player_total == 21
       puts "BLACKJACK!!! You win!"
-      stop_playing = true
+      player_wins = true
     end
   else
     break
   end
 end
 
-if !player_busted
+if !player_busted && !player_wins
   stop_playing = false
   while !stop_playing
     dealer_total = get_total_points $dealer_hand
     if dealer_total >= 17
       stop_playing = true
-      puts "Dealer hand #{$dealer_hand}"
-      puts "Player hand #{$player_hand}"
+      puts "Dealer hand #{$dealer_hand}  Total: #{dealer_total}"
+      puts "Player hand #{$player_hand}  Total: #{player_total}"
       if dealer_total > 21
         puts "Dealer Busts!"
-      else
-        puts "Dealer total: #{dealer_total}"
-        puts "Player total: #{player_total}"
+        player_wins = true
       end
+    else
+      $dealer_hand.push $playing_cards.pop
     end
-    $dealer_hand.push $playing_cards.pop
   end
 end
 
-if (player_total > 21 || (dealer_total < 22 && dealer_total >= player_total))
-  puts "Dealer Wins!"
-else
+if (player_wins || (dealer_total < player_total))
   puts "Player Wins!"
+elsif (dealer_total == player_total)
+  puts "It's a draw!"
+else
+  puts "Dealer Wins!"
 end
