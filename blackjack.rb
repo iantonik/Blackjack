@@ -115,7 +115,7 @@ if !player_busted && !player_wins
   end
 end
 
-if (player_wins || (dealer_total < player_total))
+if (player_wins && !player_busted && (dealer_total < player_total))
   puts "Player Wins!"
 elsif (dealer_total == player_total)
   puts "It's a draw!"
